@@ -1,21 +1,28 @@
-import { useEffect, useState } from "react";
-import api from "./services/api";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const [status, setStatus] = useState("Checking server...");
-
-  useEffect(() => {
-    api
-      .get("/health")
-      .then((res) => setStatus(res.data.message))
-      .catch(() => setStatus("Cannot reach server"));
-  }, []);
-
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Travora</h1>
-      <p>{status}</p>
-    </div>
+    <>
+      <Toaster position="top-right" />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </>
   );
 }
 
