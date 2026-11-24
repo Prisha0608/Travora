@@ -261,3 +261,77 @@ export const deleteActivity = async (req, res) => {
     sendError(res, error);
   }
 };
+const pickExpenseFields = (body) => {
+  const allowed = ["category", "amount", "description", "date"];
+  const data = {};
+  allowed.forEach((key) => {
+    if (body[key] !== undefined) data[key] = body[key];
+  });
+  if (data.amount !== undefined) data.amount = Number(data.amount);
+  if (data.date === "") delete data.date; // let the default (today) apply
+  return data;
+};
+
+const isValidAmount = (amount) => Number.isFinite(amount) && amount > 0;
+
+// POST /api/trips/:id/expenses
+export const addExpense = async (req, res) => {
+  try {
+    const trip = await getOwnedTrip(req, res);
+    if (!trip) return;
+
+    const data = pickExpenseFields(req.body);
+    if (!isValidAmount(data.amount)) {
+      return res
+        .status(400)
+        .json({ message: "Amount must be a number greater than 0" });
+    }
+
+    trip.expenses.push(data);
+    await trip.save();
+    res.status(201).json(trip);
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+
+// PUT /api/trips/:id/expenses/:expId
+export const updateExpense = async (req, res) => {
+  try {
+    const trip = await getOwnedTrip(req, res);
+    if (!trip) return;
+
+    const expense = trip.expenses.id(req.params.expId);
+    if (!expense) return res.status(404).json({ message: "Expense not found" });
+
+    const data = pickExpenseFields(req.body);
+    if (data.amount !== undefined && !isValidAmount(data.amount)) {
+      return res
+        .status(400)
+        .json({ message: "Amount must be a number greater than 0" });
+    }
+
+    expense.set(data);
+    await trip.save();
+    res.json(trip);
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+
+// DELETE /api/trips/:id/expenses/:expId
+export const deleteExpense = async (req, res) => {
+  try {
+    const trip = await getOwnedTrip(req, res);
+    if (!trip) return;
+
+    const expense = trip.expenses.id(req.params.expId);
+    if (!expense) return res.status(404).json({ message: "Expense not found" });
+
+    expense.deleteOne();
+    await trip.save();
+    res.json(trip);
+  } catch (error) {
+    sendError(res, error);
+  }
+};

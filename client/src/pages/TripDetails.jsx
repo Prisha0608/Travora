@@ -7,6 +7,7 @@ import DestinationsTab from "../components/DestinationsTab";
 import { formatDate, getTripDays, formatCurrency } from "../utils/helpers";
 import "./TripDetails.css";
 import ItineraryTab from "../components/ItineraryTab";
+import BudgetTab from "../components/BudgetTab";
 
 const TABS = ["Overview", "Destinations", "Itinerary", "Budget"];
 
@@ -71,9 +72,11 @@ const TripDetails = () => {
                 <strong>{trip.destinations.length}</strong>
               </div>
               <div className="details-box">
-                <span className="muted">Expenses logged</span>
-                <strong>{trip.expenses.length}</strong>
-              </div>
+  <span className="muted">Total spent</span>
+  <strong>
+    {formatCurrency(trip.expenses.reduce((sum, e) => sum + e.amount, 0))}
+  </strong>
+</div>
             </div>
 
             {trip.description && (
@@ -94,10 +97,8 @@ const TripDetails = () => {
 )}
 
         {activeTab === "Budget" && (
-          <div className="details-desc">
-            <p className="muted">Budget tracking is coming in Step 6 💰</p>
-          </div>
-        )}
+  <BudgetTab trip={trip} onTripUpdate={setTrip} />
+)}
       </main>
     </>
   );

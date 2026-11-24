@@ -11,6 +11,7 @@ import {
   addActivity, 
   updateActivity, 
   deleteActivity,
+  addExpense, updateExpense, deleteExpense,
 } from "../controllers/tripController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -31,5 +32,11 @@ router
   .route("/:id/itinerary/:dayId/activities/:actId")
   .put(updateActivity)
   .delete(deleteActivity);
+
+router.post("/:id/expenses", addExpense);
+router
+  .route("/:id/expenses/:expId")
+  .put(updateExpense)
+  .delete(deleteExpense);
 
 export default router;
