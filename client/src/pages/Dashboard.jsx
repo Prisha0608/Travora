@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -5,45 +6,69 @@ import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import TripCard from "../components/TripCard";
+import Spinner from "../components/Spinner";
 import { formatCurrency, isUpcoming } from "../utils/helpers";
 import "./Dashboard.css";
 
 const Dashboard = () => {
   const { user } = useAuth();
+
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  // Load all trips
+  const loadTrips = () => {
+    setLoading(true);
+    setError(false);
+
     api
       .get("/trips")
       .then((res) => setTrips(res.data))
-      .catch(() => toast.error("Could not load trips"))
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadTrips();
   }, []);
 
+  // Delete a trip
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this trip? This cannot be undone.")) return;
+
     try {
       await api.delete(`/trips/${id}`);
+
       setTrips((prev) => prev.filter((t) => t._id !== id));
+
       toast.success("Trip deleted");
     } catch {
       toast.error("Could not delete trip");
     }
   };
 
-  const upcomingCount = trips.filter((t) => isUpcoming(t.endDate)).length;
-  const totalBudget = trips.reduce((sum, t) => sum + (t.totalBudget || 0), 0);
+  // Dashboard statistics
+  const upcomingCount = trips.filter((t) =>
+    isUpcoming(t.endDate)
+  ).length;
+
+  const totalBudget = trips.reduce(
+    (sum, t) => sum + (t.totalBudget || 0),
+    0
+  );
 
   return (
     <>
       <Navbar />
+
       <main className="page">
         <div className="dash-header">
           <div>
             <h1>Hello, {user.name} 👋</h1>
             <p className="muted">Here are all your trips.</p>
           </div>
+
           <Link to="/trips/new" className="btn btn-accent">
             + Create Trip
           </Link>
@@ -54,22 +79,44 @@ const Dashboard = () => {
             <span className="stat-num">{trips.length}</span>
             <span className="stat-label">Total trips</span>
           </div>
+
           <div className="stat">
             <span className="stat-num">{upcomingCount}</span>
             <span className="stat-label">Upcoming</span>
           </div>
+
           <div className="stat">
-            <span className="stat-num">{formatCurrency(totalBudget)}</span>
+            <span className="stat-num">
+              {formatCurrency(totalBudget)}
+            </span>
             <span className="stat-label">Total budget</span>
           </div>
         </div>
 
+        {/* Loading, Error, Empty or Trips */}
         {loading ? (
-          <p className="muted">Loading trips...</p>
+          <Spinner text="Loading your trips..." />
+        ) : error ? (
+          <div className="error-box">
+            <h2>Couldn't load your trips</h2>
+            <p className="muted">
+              Check your connection and try again.
+            </p>
+
+            <button
+              className="btn btn-primary"
+              onClick={loadTrips}
+            >
+              Try again
+            </button>
+          </div>
         ) : trips.length === 0 ? (
           <div className="empty">
             <h2>No trips yet 🧳</h2>
-            <p className="muted">Create your first trip to get started.</p>
+            <p className="muted">
+              Create your first trip to get started.
+            </p>
+
             <Link to="/trips/new" className="btn btn-accent">
               + Create Trip
             </Link>
@@ -77,7 +124,11 @@ const Dashboard = () => {
         ) : (
           <div className="trip-grid">
             {trips.map((trip) => (
-              <TripCard key={trip._id} trip={trip} onDelete={handleDelete} />
+              <TripCard
+                key={trip._id}
+                trip={trip}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         )}

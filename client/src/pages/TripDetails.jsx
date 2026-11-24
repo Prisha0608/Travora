@@ -8,6 +8,7 @@ import { formatDate, getTripDays, formatCurrency } from "../utils/helpers";
 import "./TripDetails.css";
 import ItineraryTab from "../components/ItineraryTab";
 import BudgetTab from "../components/BudgetTab";
+import Spinner from "../components/Spinner";
 
 const TABS = ["Overview", "Destinations", "Itinerary", "Budget"];
 
@@ -27,7 +28,7 @@ const TripDetails = () => {
       });
   }, [id, navigate]);
 
-  if (!trip) return <p style={{ padding: "2rem" }}>Loading...</p>;
+  if (!trip) return <Spinner text="Loading trip..." />;
 
   const days = getTripDays(trip.startDate, trip.endDate);
 
