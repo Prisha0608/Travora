@@ -3,13 +3,17 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../services/api";
 import Navbar from "../components/Navbar";
+import DestinationsTab from "../components/DestinationsTab";
 import { formatDate, getTripDays, formatCurrency } from "../utils/helpers";
 import "./TripDetails.css";
+
+const TABS = ["Overview", "Destinations", "Itinerary", "Budget"];
 
 const TripDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [trip, setTrip] = useState(null);
+  const [activeTab, setActiveTab] = useState("Overview");
 
   useEffect(() => {
     api
@@ -42,33 +46,59 @@ const TripDetails = () => {
           </Link>
         </div>
 
-        <div className="details-grid">
-          <div className="details-box">
-            <span className="muted">Total budget</span>
-            <strong>{formatCurrency(trip.totalBudget)}</strong>
-          </div>
-          <div className="details-box">
-            <span className="muted">Destinations</span>
-            <strong>{trip.destinations.length}</strong>
-          </div>
-          <div className="details-box">
-            <span className="muted">Expenses logged</span>
-            <strong>{trip.expenses.length}</strong>
-          </div>
+        <div className="tabs">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              className={`tab ${activeTab === tab ? "tab-active" : ""}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
-        {trip.description && (
+        {activeTab === "Overview" && (
+          <>
+            <div className="details-grid">
+              <div className="details-box">
+                <span className="muted">Total budget</span>
+                <strong>{formatCurrency(trip.totalBudget)}</strong>
+              </div>
+              <div className="details-box">
+                <span className="muted">Destinations</span>
+                <strong>{trip.destinations.length}</strong>
+              </div>
+              <div className="details-box">
+                <span className="muted">Expenses logged</span>
+                <strong>{trip.expenses.length}</strong>
+              </div>
+            </div>
+
+            {trip.description && (
+              <div className="details-desc">
+                <h3>About this trip</h3>
+                <p>{trip.description}</p>
+              </div>
+            )}
+          </>
+        )}
+
+        {activeTab === "Destinations" && (
+          <DestinationsTab trip={trip} onTripUpdate={setTrip} />
+        )}
+
+        {activeTab === "Itinerary" && (
           <div className="details-desc">
-            <h3>About this trip</h3>
-            <p>{trip.description}</p>
+            <p className="muted">Itinerary is coming in Step 5 🗓</p>
           </div>
         )}
 
-        <div className="details-desc">
-          <p className="muted">
-            Destinations, itinerary, and budget tabs are coming in the next steps.
-          </p>
-        </div>
+        {activeTab === "Budget" && (
+          <div className="details-desc">
+            <p className="muted">Budget tracking is coming in Step 6 💰</p>
+          </div>
+        )}
       </main>
     </>
   );

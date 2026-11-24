@@ -102,3 +102,67 @@ export const deleteTrip = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+// POST /api/trips/:id/destinations
+export const addDestination = async (req, res) => {
+  try {
+    const trip = await getOwnedTrip(req, res);
+    if (!trip) return;
+
+    const { name, country, notes } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({ message: "Destination name is required" });
+    }
+
+    trip.destinations.push({ name, country, notes });
+    await trip.save();
+    res.status(201).json(trip);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// PUT /api/trips/:id/destinations/:destId
+export const updateDestination = async (req, res) => {
+  try {
+    const trip = await getOwnedTrip(req, res);
+    if (!trip) return;
+
+    const destination = trip.destinations.id(req.params.destId);
+    if (!destination) {
+      return res.status(404).json({ message: "Destination not found" });
+    }
+
+    const { name, country, notes } = req.body;
+    if (name !== undefined && !name.trim()) {
+      return res.status(400).json({ message: "Destination name is required" });
+    }
+
+    if (name !== undefined) destination.name = name;
+    if (country !== undefined) destination.country = country;
+    if (notes !== undefined) destination.notes = notes;
+
+    await trip.save();
+    res.json(trip);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// DELETE /api/trips/:id/destinations/:destId
+export const deleteDestination = async (req, res) => {
+  try {
+    const trip = await getOwnedTrip(req, res);
+    if (!trip) return;
+
+    const destination = trip.destinations.id(req.params.destId);
+    if (!destination) {
+      return res.status(404).json({ message: "Destination not found" });
+    }
+
+    destination.deleteOne();
+    await trip.save();
+    res.json(trip);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
