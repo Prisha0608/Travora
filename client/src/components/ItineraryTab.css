@@ -1,0 +1,158 @@
+.it-summary {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  background: #fff;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  margin-bottom: 1rem;
+  color: #475569;
+}
+
+.it-summary strong {
+  font-size: 1.4rem;
+  color: #0d9488;
+}
+
+.day-pills {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.day-pill {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #334155;
+  font-family: inherit;
+}
+
+.day-pill span {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.day-pill:hover {
+  border-color: #0d9488;
+}
+
+.day-pill-active {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #fff;
+}
+
+.day-pill-active span {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.day-header h3 {
+  margin: 0;
+}
+
+.day-cost {
+  background: #ccfbf1;
+  color: #0f766e;
+  font-weight: 700;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+}
+
+.act-form-row {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 0.75rem;
+}
+
+.act-form-row:nth-of-type(2) {
+  grid-template-columns: 3fr 1fr;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.timeline-time {
+  text-align: right;
+  font-weight: 700;
+  color: #0d9488;
+  padding-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.timeline-card {
+  background: #fff;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  border-left: 4px solid #0d9488;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.timeline-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.timeline-top h4 {
+  margin: 0 0 0.2rem;
+}
+
+.timeline-cost {
+  font-weight: 700;
+  color: #f97316;
+  white-space: nowrap;
+}
+
+.timeline-notes {
+  margin: 0.4rem 0 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.timeline-card .dest-actions {
+  margin-top: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .act-form-row,
+  .act-form-row:nth-of-type(2) {
+    grid-template-columns: 1fr;
+  }
+  .timeline-item {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+  .timeline-time {
+    text-align: left;
+    padding-top: 0;
+  }
+}

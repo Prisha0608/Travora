@@ -58,11 +58,15 @@ const tripSchema = new mongoose.Schema(
 );
 
 // End date must not be before start date
+
 tripSchema.pre("validate", function () {
-  if (this.startDate && this.endDate && this.endDate < this.startDate) {
-    this.invalidate("endDate", "End date cannot be before start date");
+  if (this.startDate && this.endDate) {
+    if (this.endDate < this.startDate) {
+      this.invalidate("endDate", "End date cannot be before start date");
+    } else if ((this.endDate - this.startDate) / 86400000 > 365) {
+      this.invalidate("endDate", "A trip can be at most 365 days long");
+    }
   }
-  
 });
 
 export default mongoose.model("Trip", tripSchema);

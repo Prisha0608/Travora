@@ -8,6 +8,9 @@ import {
   addDestination,
   updateDestination,
   deleteDestination,
+  addActivity, 
+  updateActivity, 
+  deleteActivity,
 } from "../controllers/tripController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -22,5 +25,11 @@ router
   .route("/:id/destinations/:destId")
   .put(updateDestination)
   .delete(deleteDestination);
+
+router.post("/:id/itinerary/:dayId/activities", addActivity);
+router
+  .route("/:id/itinerary/:dayId/activities/:actId")
+  .put(updateActivity)
+  .delete(deleteActivity);
 
 export default router;

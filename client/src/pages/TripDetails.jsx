@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import DestinationsTab from "../components/DestinationsTab";
 import { formatDate, getTripDays, formatCurrency } from "../utils/helpers";
 import "./TripDetails.css";
+import ItineraryTab from "../components/ItineraryTab";
 
 const TABS = ["Overview", "Destinations", "Itinerary", "Budget"];
 
@@ -89,10 +90,8 @@ const TripDetails = () => {
         )}
 
         {activeTab === "Itinerary" && (
-          <div className="details-desc">
-            <p className="muted">Itinerary is coming in Step 5 🗓</p>
-          </div>
-        )}
+  <ItineraryTab trip={trip} onTripUpdate={setTrip} />
+)}
 
         {activeTab === "Budget" && (
           <div className="details-desc">

@@ -18,3 +18,19 @@ export const formatCurrency = (amount) =>
   "₹" + Number(amount || 0).toLocaleString("en-IN");
 
 export const isUpcoming = (endDate) => new Date(endDate) >= new Date();
+// "14:30" -> "2:30 PM"
+export const formatTime = (time) => {
+  if (!time) return "Anytime";
+  const [h, m] = time.split(":").map(Number);
+  const suffix = h >= 12 ? "PM" : "AM";
+  return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${suffix}`;
+};
+
+// "Sun, 20 Dec"
+export const formatDayDate = (date) =>
+  new Date(date).toLocaleDateString("en-IN", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
