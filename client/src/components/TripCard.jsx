@@ -1,78 +1,105 @@
 
 import { Link } from "react-router-dom";
-import { formatDate, getTripDays, formatCurrency } from "../utils/helpers";
+import {
+  formatDate,
+  getTripDays,
+  formatCurrency,
+} from "../utils/helpers";
+import { getDestinationImage } from "../utils/destinationImages";
 import "./TripCard.css";
 
-const tripImages = [
-  "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1000&q=85",
-];
-
-const TripCard = ({ trip, onDelete }) => {
+function TripCard({ trip, onDelete }) {
   const days = getTripDays(trip.startDate, trip.endDate);
+
   const title = trip.title || trip.destination || "Untitled trip";
 
-  // Give each trip a consistent image based on its title.
-  const imageIndex = [...title].reduce(
-    (total, character) => total + character.charCodeAt(0),
-    0
-  ) % tripImages.length;
+  // Get destination-specific photograph
+  const coverImage = getDestinationImage(
+    trip.destination || trip.title
+  );
 
   return (
     <article className="trip-card">
+
+      {/* Trip Image Banner */}
       <div
         className="trip-card-banner"
-        style={{ backgroundImage: `url("${tripImages[imageIndex]}")` }}
+        style={{
+          backgroundImage: `url("${coverImage}")`,
+        }}
       >
         <div className="trip-banner-overlay"></div>
 
-        <span className="trip-card-label">
+        {/* Journey Label */}
+        <div className="trip-card-label">
           <span className="trip-label-dot"></span>
           YOUR JOURNEY
-        </span>
+        </div>
 
+        {/* Destination Title */}
         <div className="trip-banner-title">
-          <span>DESTINATION</span>
+          <span>EXPLORE THE WORLD</span>
           <h3>{title}</h3>
         </div>
 
-        <span className="trip-banner-arrow">↗</span>
+        {/* Arrow */}
+        <span className="trip-banner-arrow">
+          ↗
+        </span>
       </div>
 
+      {/* Trip Information */}
       <div className="trip-card-body">
+
+        {/* Travel Dates */}
         <div className="trip-card-date">
-          <span className="trip-date-icon">✦</span>
-          {formatDate(trip.startDate)} – {formatDate(trip.endDate)}
+          <span className="trip-date-icon">📅</span>
+
+          <span>
+            {formatDate(trip.startDate)} –{" "}
+            {formatDate(trip.endDate)}
+          </span>
         </div>
 
+        {/* Duration and Budget */}
         <div className="trip-meta">
+
           <div className="trip-meta-item">
-            <span className="meta-icon meta-turquoise">◷</span>
+            <span className="meta-icon meta-turquoise">
+              ⏳
+            </span>
+
             <div>
-              <strong>{days} {days === 1 ? "Day" : "Days"}</strong>
-              <small>Duration</small>
+              <small>DURATION</small>
+              <strong>
+                {days} {days === 1 ? "day" : "days"}
+              </strong>
             </div>
           </div>
 
           <div className="trip-meta-item">
-            <span className="meta-icon meta-orange">₹</span>
+            <span className="meta-icon meta-orange">
+              ₹
+            </span>
+
             <div>
-              <strong>{formatCurrency(trip.totalBudget)}</strong>
-              <small>Trip budget</small>
+              <small>BUDGET</small>
+              <strong>
+                {formatCurrency(trip.totalBudget)}
+              </strong>
             </div>
           </div>
+
         </div>
 
+        {/* Action Buttons */}
         <div className="trip-actions">
+
           <Link
             to={`/trips/${trip._id}`}
             className="trip-action-view"
           >
-            Explore trip <span>↗</span>
+            Explore trip <span>→</span>
           </Link>
 
           <Link
@@ -89,10 +116,12 @@ const TripCard = ({ trip, onDelete }) => {
           >
             Delete
           </button>
+
         </div>
+
       </div>
     </article>
   );
-};
+}
 
 export default TripCard;

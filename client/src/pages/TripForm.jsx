@@ -26,7 +26,7 @@ const TripForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [originalItinerary, setOriginalItinerary] = useState([]);
 
-  // In edit mode, load the existing trip
+  // Load existing trip in edit mode
   useEffect(() => {
     if (!isEdit) return;
 
@@ -36,11 +36,11 @@ const TripForm = () => {
         setOriginalItinerary(data.itinerary || []);
 
         setForm({
-          title: data.title,
+          title: data.title || "",
           description: data.description || "",
           startDate: toInputDate(data.startDate),
           endDate: toInputDate(data.endDate),
-          totalBudget: data.totalBudget,
+          totalBudget: data.totalBudget ?? "",
         });
       })
       .catch(() => {
@@ -50,15 +50,20 @@ const TripForm = () => {
       .finally(() => setLoading(false));
   }, [id, isEdit, navigate]);
 
-  // Handle form input changes
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate dates
     if (form.endDate < form.startDate) {
       return toast.error("End date cannot be before start date");
     }
@@ -67,12 +72,11 @@ const TripForm = () => {
       return toast.error("A trip can be at most 365 days long");
     }
 
-    // Validate budget
     if (Number(form.totalBudget) < 0) {
       return toast.error("Budget cannot be negative");
     }
 
-    // Warn before deleting activities outside the new date range
+    // Check whether changing dates will remove activities
     if (isEdit) {
       const lostCount = originalItinerary
         .filter((day) => {
@@ -130,12 +134,30 @@ const TripForm = () => {
     <>
       <Navbar />
 
-      <main className="page">
-        <form className="form-card" onSubmit={handleSubmit}>
-          <h1>{isEdit ? "Edit trip" : "Create a new trip"}</h1>
+      <main className="page trip-form-page">
+        <div className="trip-form-heading">
+          <span>PLAN YOUR NEXT ADVENTURE</span>
 
-          <label>Trip title</label>
+          <h1>
+            {isEdit ? "Update your journey" : "Create your journey"}
+          </h1>
+
+          <p>
+            {isEdit
+              ? "Make changes to your travel plans."
+              : "Every great journey starts with a plan."}
+          </p>
+        </div>
+
+        <form className="form-card" onSubmit={handleSubmit}>
+          <div className="form-card-heading">
+            <h2>{isEdit ? "Edit trip details" : "Trip details"}</h2>
+            <p>Fill in the details of your upcoming adventure.</p>
+          </div>
+
+          <label htmlFor="title">Trip title</label>
           <input
+            id="title"
             name="title"
             value={form.title}
             onChange={handleChange}
@@ -146,8 +168,9 @@ const TripForm = () => {
 
           <div className="form-row">
             <div>
-              <label>Start date</label>
+              <label htmlFor="startDate">Start date</label>
               <input
+                id="startDate"
                 type="date"
                 name="startDate"
                 value={form.startDate}
@@ -157,20 +180,22 @@ const TripForm = () => {
             </div>
 
             <div>
-              <label>End date</label>
+              <label htmlFor="endDate">End date</label>
               <input
+                id="endDate"
                 type="date"
                 name="endDate"
                 value={form.endDate}
-                min={form.startDate}
                 onChange={handleChange}
+                min={form.startDate}
                 required
               />
             </div>
           </div>
 
-          <label>Total budget (₹)</label>
+          <label htmlFor="totalBudget">Total budget (₹)</label>
           <input
+            id="totalBudget"
             type="number"
             name="totalBudget"
             value={form.totalBudget}
@@ -179,8 +204,9 @@ const TripForm = () => {
             min="0"
           />
 
-          <label>Description (optional)</label>
+          <label htmlFor="description">Description (optional)</label>
           <textarea
+            id="description"
             name="description"
             value={form.description}
             onChange={handleChange}
@@ -205,8 +231,8 @@ const TripForm = () => {
               {submitting
                 ? "Saving..."
                 : isEdit
-                  ? "Save changes"
-                  : "Create trip"}
+                  ? "Save changes →"
+                  : "Create trip →"}
             </button>
           </div>
         </form>
