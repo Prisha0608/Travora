@@ -17,9 +17,14 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password.length < 6) {
-      return toast.error("Password must be at least 6 characters");
-    }
+    const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%&*!]).{8,}$/;
+
+if (!passwordRegex.test(password)) {
+  return toast.error(
+    "Password must have 8 characters, uppercase, lowercase, a number and a special character."
+  );
+}
 
     setSubmitting(true);
 
@@ -126,13 +131,18 @@ const Register = () => {
               <span>♙</span>
               <input
                 type="password"
-                placeholder="At least 6 characters"
+                placeholder="Create a strong password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
               />
+
             </div>
+                          <p className="password-hint">
+  Must contain 8+ characters, uppercase, lowercase,
+  a number and a special character (@#$%&*!).
+</p>
 
             <button
               type="submit"
