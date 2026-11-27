@@ -8,13 +8,6 @@
   padding: 24px;
   border-radius: 20px;
   min-height: 550px;
-  background:
-    linear-gradient(
-      rgba(10, 35, 31, 0.48),
-      rgba(10, 35, 31, 0.60)
-    ),
-    url("https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=2000&q=85")
-    center / cover fixed;
 }
 
 

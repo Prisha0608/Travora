@@ -29,6 +29,7 @@ const destinationImages = {
 const defaultImage =
   "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1000&q=85";
 
+
 export const getDestinationImage = (destination) => {
   if (!destination) return defaultImage;
 
@@ -36,7 +37,14 @@ export const getDestinationImage = (destination) => {
     .toLowerCase()
     .replace(/[^a-z]/g, "");
 
-  return destinationImages[normalizedDestination] || defaultImage;
+  const matchedDestination = Object.keys(destinationImages)
+    .sort((a, b) => b.length - a.length)
+    .find((key) => normalizedDestination.includes(key));
+
+  return matchedDestination
+    ? destinationImages[matchedDestination]
+    : defaultImage;
 };
+
 
 export default destinationImages;
