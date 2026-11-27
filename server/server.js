@@ -8,7 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import tripRoutes from "./routes/tripRoutes.js";
 
 const app = express();
-
+console.log("CLIENT_URL:", process.env.CLIENT_URL);
 // Middleware
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL }));
